@@ -1,3 +1,5 @@
+library(ggplot2)
+
 N <- 30
 baseSEX <- 160
 meaneffectSEX <- 15
@@ -18,3 +20,7 @@ dat <- data.frame("sex" = sexes, "height" = heights, "dose" = doses, stringsAsFa
 model <- lm(height~sex+dose+sex:dose, data=dat)
 
 print(summary(model))
+
+g <- ggplot(data =  dat)
+g <- g + geom_point(aes(x = dose, y = height, color = sex))
+print(g)
