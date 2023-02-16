@@ -1,34 +1,28 @@
-data_file <- "behavpharma_v1.csv"
+library(ggplot2)
 
-# Load in Data
-data <- read.csv(
-  file = data_file,
-  header = TRUE,
-  stringsAsFactors = TRUE
-)
 
-#Visualization of dependent variables
-hist(data$ANXIETY)
-hist(data$MEMORY)
+datlong <- read.table('/Users/kaseyspry/Documents/Wake Forest/5. NEUR PhD Classes/1. NEUR 751/NEUR751/behavpharma_v1.csv', 
+                      header = TRUE,
+                      sep = ",",
+                      stringsAsFactors = TRUE)
+dat <- reshape(datlong, 
+               idvar = "ID", 
+               timevar = "PREPOST", 
+               direction = "wide",
+               v.names = c("ANXIETY", "MEMORY")
+               )
+dat$DOSE <- factor(dat$DOSE,
+                   levels = c("SHAM", "LOW", "MED", "HIGH")
+                   )
 
-# Visualization of Anxiety variable by independent variables (sex, dose, and pre v post)
-par(mfrow = c(4,4)) #plots in multiframe mode
-for(sex in c("MALE", "FEMALE")){ 
-  for (prepost in c("PRE","POST")){
-    for(dose in c("SHAM","LOW","MED","HIGH")){
-      thegroup <- which((sex==data$SEX)&(dose==data$DOSE)&(prepost==data$PREPOST))
-      hist(data$ANXIETY[thegroup],xlab = paste(sex,",", dose,",", prepost),main = "Anxiety")
-    }
-  }
-}
+model.memory <- lm(data = dat,
+            MEMORY.POST~SEX + DOSE + SEX*DOSE + MEMORY.PRE)
+model.anxiety <- lm(data = dat,
+                    ANXIETY.POST~ANXIETY.PRE + SEX + DOSE + SEX*DOSE)
+print(summary(model.anxiety))
 
-# Visualization of Memory variable by independent variables (sex, dose, and pre v post)
-par(mfrow = c(4,4)) #plots in multiframe mode
-for(sex in c("MALE", "FEMALE")){ 
-  for (prepost in c("PRE","POST")){
-    for(dose in c("SHAM","LOW","MED","HIGH")){
-      thegroup <- which((sex==data$SEX)&(dose==data$DOSE)&(prepost==data$PREPOST))
-      hist(data$MEMORY[thegroup],xlab = paste(sex,",", dose,",", prepost),main = "Memory")
-    }
-  }
-}
+
+g <- ggplot( data = dat, 
+             aes(x = SEX, y = ANXIETY.POST))
+g <- g + geom_violin()
+print(g)
