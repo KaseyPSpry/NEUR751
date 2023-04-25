@@ -6,7 +6,7 @@ library("heplots")
 library("rrcov")
 
 dat <- read.table(
-  file = "/Volumes/home5$/kpotts/11. NEUR PhD Classes/NEUR 751/NEUR 751/livedie_v1.csv",
+  file = "/Volumes/kpotts/11. NEUR PhD Classes/NEUR 751/NEUR 751/livedie_v1.csv",
   header = TRUE,
   sep = ","
 ) 
